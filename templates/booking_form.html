@@ -1,0 +1,21 @@
+{% extends "base.html" %}-
+{% block content %}
+    <form method="POST" action="{% url 'booking_create' %}">
+
+    {% csrf_token %}
+
+
+
+        <label for="room-number">Room number :</label>
+        <input type="text" id="room-number" name="room-number">
+        <br>
+        <label for="start-time">Start time :</label>
+        <input type="datetime-local" id="start-time" name="start-time">
+        <br>
+        <label for="end-time">End time :</label>
+        <input type="datetime-local" id="end-time" name="end-time">
+        <br>
+        <button type="submit">Book this room</button>
+
+    </form>
+{% endblock %}

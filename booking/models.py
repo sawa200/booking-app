@@ -1,4 +1,5 @@
-from django.db import models , Q
+from django.db import models
+from django.db.models import Q, Model  
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +15,11 @@ class Location(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = _('Location')
+        verbose_name_plural = _('Locations')
+        ordering = ['title']
 
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings', on_delete=models.CASCADE)

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{%block content %}
+
+<h1>Booking #{{ booking.id }}</h1>
+<p>User: {{ booking.user.username }}</p>
+<p>Room: {{ booking.room }}</p>
+<p>Time range: {{ booking.start_time }} - {{ booking.end_time }}</p>
+
+{%endblock %}
