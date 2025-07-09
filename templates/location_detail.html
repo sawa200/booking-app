@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<h2 class="text-2xl font-bold mb-4">{{ room.title }} 🏠</h2>
+<p><strong>Номер:</strong> {{ room.number }} 🔢</p>
+<p><strong>Вмістимість:</strong> {{ room.capacity }} людей 👥</p>
+<p><strong>Ціна:</strong> {{ room.price }} ₴</p>
+<p><strong>Опис:</strong> {{ room.description }}</p>
+
+<!-- Показываем ошибки если есть -->
+{% if messages %}
+  <ul class="mb-4 text-red-600">
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post" action="{% url 'booking_create' room.pk %}" class="mt-6 max-w-sm">
+  {% csrf_token %}
+
+  <label for="start_time" class="block font-semibold mb-1">Дата заїзду:</label>
+  <input
+    type="date"
+    id="start_time"
+    name="start_time"
+    required
+    class="border rounded px-3 py-2 mb-4 w-full"
+    value="{{ start_time|default:'' }}"
+  >
+
+  <label for="end_time" class="block font-semibold mb-1">Дата виїзду:</label>
+  <input
+    type="date"
+    id="end_time"
+    name="end_time"
+    required
+    class="border rounded px-3 py-2 mb-4 w-full"
+    value="{{ end_time|default:'' }}"
+  >
+
+  <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition">
+    Забронювати ✅
+  </button>
+</form>
+
+{% endblock %}

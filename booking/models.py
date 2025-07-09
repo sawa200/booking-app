@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class Location(models.Model):
+    number = models.CharField(max_length=10 , default='N/A')  # номер локації
     title = models.CharField(max_length=100,unique=True)
     capacity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -30,17 +31,19 @@ class Booking(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_confirmed = models.BooleanField(default=False)
 
-    def __str__(self):
-        super().clean()
+    def clean(self):
         if self.start_date > self.end_date:
             raise ValidationError(_('Дата початку не може бути пізніше дати закінчення.'))
 
         if Booking.objects.filter(location=self.location).exclude(pk=self.pk).filter(
             Q(start_date__lte=self.end_date) & Q(end_date__gte=self.start_date)
         ).exists():
-            raise ValidationError(_('ці дати вже зайняті для локації.'))
+            raise ValidationError(_('Ці дати вже зайняті для локації.'))
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
-def seve(self, *args, **kwargs):
-    self.clean()
-    super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.user.username} - {self.location.title} ({self.start_date} до {self.end_date})"
+

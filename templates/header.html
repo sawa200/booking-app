@@ -1,2 +1,10 @@
-<h1>BOOKING SYSTEM</h1>
-<hr>
+<header class="bg-indigo-700 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Система Бронювання 🏨</h1>
+
+        <nav class="space-x-4">
+            <a href="{% url 'room_list' %}" class="hover:underline">Кімнати 🛏️</a>
+            <a href="{% url 'booking_create' pk=1 %}" class="hover:underline">Забронювати 📅</a>
+        </nav>
+    </div>
+</header>

@@ -1,9 +1,14 @@
 {% extends "base.html" %}
-{%block content %}
+{% block content %}
+  <div class="bg-white shadow-md rounded-lg p-6 max-w-xl mx-auto mt-10">
+    <h1 class="text-2xl font-bold text-green-600 mb-4">Бронювання №{{ booking.id }} підтверджено ✅</h1>
 
-<h1>Booking #{{ booking.id }}</h1>
-<p>User: {{ booking.user.username }}</p>
-<p>Room: {{ booking.room }}</p>
-<p>Time range: {{ booking.start_time }} - {{ booking.end_time }}</p>
+    <p class="mb-2"><strong>Користувач:</strong> {{ booking.user.username }} 👤</p>
+    <p class="mb-2"><strong>Кімната:</strong> {{ booking.location.number }} 🛏️</p>
+    <p class="mb-2"><strong>Період:</strong> з {{ booking.start_date }} по {{ booking.end_date }} 📅</p>
 
-{%endblock %}
+    <a href="{% url 'room_list' %}" class="inline-block mt-6 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+      Назад до кімнат 🔙
+    </a>
+  </div>
+{% endblock %}

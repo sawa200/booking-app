@@ -1,21 +1,19 @@
-{% extends "base.html" %}-
-{% block content %}
-    <form method="POST" action="{% url 'booking_create' %}">
+{% extends "base.html" %}
 
+{% block content %}
+<h2>Бронювання кімнати 😊🏠: {{ room.name }}</h2>
+
+<form method="post">
     {% csrf_token %}
 
+    <label for="start-date">Дата початку:</label>
+    <input type="date" id="start-date" name="start_date" required>
+    <br><br>
 
+    <label for="end-date">Дата завершення:</label>
+    <input type="date" id="end-date" name="end_date" required>
+    <br><br>
 
-        <label for="room-number">Room number :</label>
-        <input type="text" id="room-number" name="room-number">
-        <br>
-        <label for="start-time">Start time :</label>
-        <input type="datetime-local" id="start-time" name="start-time">
-        <br>
-        <label for="end-time">End time :</label>
-        <input type="datetime-local" id="end-time" name="end-time">
-        <br>
-        <button type="submit">Book this room</button>
-
-    </form>
+    <button type="submit">Забронювати 📝</button>
+</form>
 {% endblock %}

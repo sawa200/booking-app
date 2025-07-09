@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for room in rooms_list %}
-        <h1>Location #{{ room.number }}</h1>
-        <h2>Capacity: {{room.capacity}}</h2>
-        <p>Location: {{room.location}}</p>
-    {% endfor %}
+    <h2 class="text-2xl font-bold mb-6">Доступні кімнати 🏢</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for room in rooms_list %}
+            <a href="{% url 'location_detail' room.pk %}" class="block bg-white shadow-md rounded-lg p-4 border hover:bg-indigo-100 transition">
+                <h3 class="text-xl font-semibold text-indigo-700 mb-2">Кімната №{{ room.number }} 🛏️</h3>
+                <p><strong>Назва:</strong> {{ room.title }}</p>
+                <p><strong>Вмістимість:</strong> {{ room.capacity }} 👥</p>
+                <p><strong>Ціна:</strong> {{ room.price }} ₴</p>
+            </a>
+        {% empty %}
+            <p>Немає доступних кімнат.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

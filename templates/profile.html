@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+  <h1 class="text-3xl font-bold mb-6">👤 Профіль користувача</h1>
+
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold mb-2">ℹ️ Основна інформація</h2>
+    <p>👤 <strong>Ім'я користувача:</strong> {{ user.username }}</p>
+    <p>📧 <strong>Email:</strong> {{ user.email }}</p>
+    <!-- Добавь сюда другие поля по необходимости -->
+  </section>
+
+  <section>
+    <h2 class="text-xl font-semibold mb-4">📅 Активні бронювання</h2>
+    {% if active_bookings %}
+      <ul class="space-y-4">
+        {% for booking in active_bookings %}
+          <li class="border p-4 rounded hover:shadow-md transition">
+            <p>🏠 <strong>Кімната:</strong> {{ booking.location.title }} (Номер {{ booking.location.number }})</p>
+            <p>📆 <strong>Дата заїзду:</strong> {{ booking.start_date }}</p>
+            <p>📅 <strong>Дата виїзду:</strong> {{ booking.end_date }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>😔 Немає активних бронювань.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
