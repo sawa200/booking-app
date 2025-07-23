@@ -2,41 +2,42 @@
 {% load static %}
 {% block content %}
 
+<!-- Подключаем стили Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <h2 class="text-2xl font-bold mb-4">{{ room.title }} 🏠</h2>
+
+{% if room.image %}
+  <img src="{{ room.image.url }}" alt="{{ room.title }}" class="w-full max-w-md rounded shadow mb-4">
+{% endif %}
+
 <p><strong>Номер:</strong> {{ room.number }} 🔢</p>
 <p><strong>Вмістимість:</strong> {{ room.capacity }} людей 👥</p>
 <p><strong>Ціна:</strong> {{ room.price }} ₴</p>
 <p><strong>Опис:</strong> {{ room.description }}</p>
 
-<!-- Показываем ошибки если есть -->
-{% if messages %}
-  <ul class="mb-4 text-red-600">
-  {% for message in messages %}
-    <li>{{ message }}</li>
-  {% endfor %}
-  </ul>
-{% endif %}
-
 <form method="post" action="{% url 'booking_create' room.pk %}" class="mt-6 max-w-sm">
   {% csrf_token %}
 
-  <label for="start_time" class="block font-semibold mb-1">Дата заїзду:</label>
+  <label for="start_time" class="block font-semibold mb-1">📅 Дата заїзду:</label>
   <input
-    type="date"
+    type="text"
     id="start_time"
     name="start_time"
     required
     class="border rounded px-3 py-2 mb-4 w-full"
+    autocomplete="off"
     value="{{ start_time|default:'' }}"
   >
 
-  <label for="end_time" class="block font-semibold mb-1">Дата виїзду:</label>
+  <label for="end_time" class="block font-semibold mb-1">📆 Дата виїзду:</label>
   <input
-    type="date"
+    type="text"
     id="end_time"
     name="end_time"
     required
     class="border rounded px-3 py-2 mb-4 w-full"
+    autocomplete="off"
     value="{{ end_time|default:'' }}"
   >
 
@@ -44,5 +45,91 @@
     Забронювати ✅
   </button>
 </form>
+
+<!-- Подключаем JS Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+  /* Синий календарь Flatpickr */
+
+  .flatpickr-calendar {
+    background-color: #0d47a1 !important;
+    border: 1px solid #1565c0 !important;
+    color: #bbdefb !important;
+    font-weight: 600;
+  }
+
+  .flatpickr-months {
+    background-color: #1565c0 !important;
+    color: #e3f2fd !important;
+  }
+
+  .flatpickr-prev-month, .flatpickr-next-month {
+    color: #bbdefb !important;
+  }
+
+  .flatpickr-weekdays {
+    background-color: #1976d2 !important;
+    color: #e3f2fd !important;
+    font-weight: 700;
+  }
+
+  .flatpickr-day {
+    color: #bbdefb !important;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .flatpickr-day.today {
+    background: #42a5f5 !important;
+    color: white !important;
+    font-weight: 700;
+  }
+
+  .flatpickr-day.selected,
+  .flatpickr-day.startRange,
+  .flatpickr-day.endRange {
+    background: #2196f3 !important;
+    color: white !important;
+    font-weight: 700;
+  }
+
+  .flatpickr-day.disabled {
+    color: #90caf9 !important;
+    opacity: 0.6;
+  }
+
+  /* Занятые даты — красным */
+  .busy-date {
+    border-bottom: 2px solid red !important;
+    color: #cc0303 !important;
+    font-weight: 700;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const busyDates = {{ busy_dates_json|safe }};
+
+    function highlightBusyDates(dObj, dStr, fp, dayElem) {
+      const dateStr = dayElem.dateObj.toISOString().slice(0, 10);
+      if (busyDates.includes(dateStr)) {
+        dayElem.classList.add("busy-date");
+      }
+    }
+
+    flatpickr("#start_time", {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      onDayCreate: highlightBusyDates
+    });
+
+    flatpickr("#end_time", {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      onDayCreate: highlightBusyDates
+    });
+  });
+</script>
 
 {% endblock %}

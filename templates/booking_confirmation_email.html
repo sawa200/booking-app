@@ -1,9 +1,47 @@
-Вітаємо, {{ user.username }}!
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Підтвердження бронювання</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+    <tr>
+      <td style="background-color: #4f46e5; color: white; padding: 20px; text-align: center;">
+        <h1 style="margin: 0;">Підтвердження бронювання 🏨</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 30px;">
+        <p style="font-size: 16px;">👋 Вітаємо, <strong>{{ user.username }}</strong>!</p>
 
-Ваше бронювання підтверджено:
+        <p style="font-size: 16px;">Ваше бронювання було успішно підтверджено. Нижче наведено деталі:</p>
 
-Кімната: {{ booking.location.title }}
-Дата заїзду: {{ booking.start_date }}
-Дата виїзду: {{ booking.end_date }}
+        <table cellpadding="10" cellspacing="0" border="0" style="width: 100%; font-size: 15px;">
+          <tr>
+            <td>🏠 <strong>Кімната:</strong></td>
+            <td>{{ booking.location.title }}</td>
+          </tr>
+          <tr>
+            <td>📅 <strong>Дата заїзду:</strong></td>
+            <td>{{ booking.start_date }}</td>
+          </tr>
+          <tr>
+            <td>📆 <strong>Дата виїзду:</strong></td>
+            <td>{{ booking.end_date }}</td>
+          </tr>
+        </table>
 
-Дякуємо, що обрали нас!
+        <p style="margin-top: 20px;">❤️ Дякуємо, що обрали нас! Якщо у вас виникнуть питання — відповідайте на цей лист або зв’яжіться з нашою службою підтримки.</p>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #888;">З повагою,<br>Команда Booking System</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #f4f4f4; text-align: center; padding: 15px; font-size: 13px; color: #777;">
+        &copy; 2025 Booking System — Усі права захищено.
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

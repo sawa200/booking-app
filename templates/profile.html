@@ -7,7 +7,6 @@
     <h2 class="text-xl font-semibold mb-2">ℹ️ Основна інформація</h2>
     <p>👤 <strong>Ім'я користувача:</strong> {{ user.username }}</p>
     <p>📧 <strong>Email:</strong> {{ user.email }}</p>
-    <!-- Добавь сюда другие поля по необходимости -->
   </section>
 
   <section>
@@ -15,10 +14,17 @@
     {% if active_bookings %}
       <ul class="space-y-4">
         {% for booking in active_bookings %}
-          <li class="border p-4 rounded hover:shadow-md transition">
+          <li class="border p-4 rounded hover:shadow-md transition relative bg-gray-50">
             <p>🏠 <strong>Кімната:</strong> {{ booking.location.title }} (Номер {{ booking.location.number }})</p>
             <p>📆 <strong>Дата заїзду:</strong> {{ booking.start_date }}</p>
             <p>📅 <strong>Дата виїзду:</strong> {{ booking.end_date }}</p>
+
+            <form action="{% url 'cancel_booking' booking.pk %}" method="post" class="mt-4">
+              {% csrf_token %}
+              <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                ❌ Скасувати бронювання
+              </button>
+            </form>
           </li>
         {% endfor %}
       </ul>
@@ -26,5 +32,21 @@
       <p>😔 Немає активних бронювань.</p>
     {% endif %}
   </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold mb-4">📜 Минулі бронювання</h2>
+    {% if past_bookings %}
+      <ul class="space-y-3">
+        {% for booking in past_bookings %}
+          <li class="border p-3 rounded bg-gray-100">
+            🏁 <strong>{{ booking.location.title }}</strong>: {{ booking.start_date }} — {{ booking.end_date }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>ℹ️ У вас ще не було минулих бронювань.</p>
+    {% endif %}
+  </section>
 </div>
 {% endblock %}
+

@@ -14,6 +14,8 @@ class Location(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    image = models.ImageField(upload_to='room_images/', blank=True, null=True)
+    
     def __str__(self):
         return self.title
 

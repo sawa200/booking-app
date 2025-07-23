@@ -1,8 +1,10 @@
+import datetime
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
@@ -10,6 +12,7 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
 from datetime import date
 
 from booking.models import Location, Booking
@@ -29,12 +32,25 @@ def profile(request):
     }
     return render(request, 'profile.html', context)
 
+
+@login_required
+def cancel_booking(request, pk):
+    booking = get_object_or_404(Booking, pk=pk, user=request.user)
+
+    if request.method == "POST":
+        booking.delete()
+        messages.success(request, "Бронювання скасовано.")
+        return redirect('profile')
+
+    return render(request, 'cancel_booking_confirm.html', {'booking': booking})
+
+
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False  # пока не активирован
+            user.is_active = False
             user.save()
 
             token = default_token_generator.make_token(user)
@@ -48,14 +64,14 @@ def register(request):
             })
 
             send_mail(
-                'Активация аккаунта',
+                'Активація облікового запису',
                 message,
                 None,
                 [user.email],
                 fail_silently=False,
             )
 
-            return HttpResponse('Проверьте вашу почту для активации аккаунта.')
+            return HttpResponse('Перевірте вашу пошту для активації акаунта.')
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
@@ -71,9 +87,9 @@ def activate(request, uidb64, token):
     if user and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Аккаунт успешно активирован. Теперь вы можете войти.')
+        return HttpResponse('Акаунт активовано. Тепер ви можете увійти.')
     else:
-        return HttpResponse('Ссылка для активации недействительна.')
+        return HttpResponse('Посилання для активації недійсне.')
 
 
 def room_list(request):
@@ -123,25 +139,24 @@ def booking_create(request, pk):
             end_date=end_date
         )
 
-        confirmation_message = render_to_string('booking_confirmation_email.html', {
+        html_message = render_to_string('booking_confirmation_email.html', {
             'user': request.user,
             'booking': booking,
         })
 
-        send_mail(
+        email = EmailMessage(
             subject='Підтвердження бронювання',
-            message=confirmation_message,
+            body=html_message,
             from_email=None,
-            recipient_list=[request.user.email],
-            fail_silently=False,
+            to=[request.user.email],
         )
+        email.content_subtype = "html"
+        email.send(fail_silently=False)
 
-        messages.success(request, "Бронювання успішно створено! Лист підтвердження відправлено на вашу пошту.")
+        messages.success(request, "Бронювання успішно створено! Підтвердження надіслано на вашу пошту.")
         return redirect("booking_success", pk=booking.id)
 
-    # Если GET-запрос, то просто перенаправляем на страницу комнаты
     return redirect('location_detail', pk=pk)
-
 
 
 def booking_success(request, pk):
@@ -151,7 +166,23 @@ def booking_success(request, pk):
 
 def location_detail(request, pk):
     room = get_object_or_404(Location, pk=pk)
-    return render(request, "location_detail.html", {"room": room})
+   
+    bookings = room.bookings.filter(end_date__gte=date.today())
+
+    busy_dates = []
+    for booking in bookings:
+        current_date = booking.start_date
+        while current_date <= booking.end_date:
+            busy_dates.append(current_date.strftime('%Y-%m-%d'))
+            current_date += datetime.timedelta(days=1)
+
+    busy_dates_json = json.dumps(busy_dates, cls=DjangoJSONEncoder)
+
+    return render(request, "location_detail.html", {
+        "room": room,
+        "bookings": bookings,
+        "busy_dates_json": busy_dates_json,
+    })
 
 
 def index(request):
