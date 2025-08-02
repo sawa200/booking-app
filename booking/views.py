@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
@@ -58,20 +58,22 @@ def register(request):
             current_site = get_current_site(request)
             activation_link = f"http://{current_site.domain}/activate/{uid}/{token}/"
 
-            message = render_to_string('activation_email.html', {
+            html_message = render_to_string('activation_email.html', {
                 'user': user,
                 'activation_link': activation_link,
             })
 
-            send_mail(
-                'Активація облікового запису',
-                message,
-                None,
-                [user.email],
-                fail_silently=False,
+            email = EmailMessage(
+                subject='Активація акаунта',
+                body=html_message,
+                from_email=None,
+                to=[user.email],
             )
+            email.content_subtype = "html"
+            email.send(fail_silently=False)
 
-            return HttpResponse('Перевірте вашу пошту для активації акаунта.')
+            messages.success(request, 'Перевірте вашу пошту для активації акаунта.')
+            return redirect('login')
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
@@ -87,9 +89,11 @@ def activate(request, uidb64, token):
     if user and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Акаунт активовано. Тепер ви можете увійти.')
+        messages.success(request, 'Акаунт активовано. Тепер ви можете увійти.')
+        return redirect('login')
     else:
-        return HttpResponse('Посилання для активації недійсне.')
+        messages.error(request, 'Посилання для активації недійсне.')
+        return redirect('register')
 
 
 def room_list(request):
@@ -97,11 +101,8 @@ def room_list(request):
     return render(request, "room_list.html", {"rooms_list": rooms})
 
 
+@login_required
 def booking_create(request, pk):
-    if not request.user.is_authenticated:
-        messages.error(request, "Для бронювання потрібно увійти в акаунт.")
-        return redirect('login')
-
     room = get_object_or_404(Location, pk=pk)
 
     if request.method == "POST":
@@ -161,12 +162,12 @@ def booking_create(request, pk):
 
 def booking_success(request, pk):
     booking = get_object_or_404(Booking, id=pk)
-    return render(request, "booking-success.html", {"booking": booking})
+    return render(request, "booking_success.html")
 
 
 def location_detail(request, pk):
     room = get_object_or_404(Location, pk=pk)
-   
+
     bookings = room.bookings.filter(end_date__gte=date.today())
 
     busy_dates = []
@@ -187,4 +188,3 @@ def location_detail(request, pk):
 
 def index(request):
     return render(request, 'index.html')
-

@@ -1,7 +1,37 @@
-Привет, {{ user.username }}!
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Активация аккаунта</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+    <tr>
+      <td style="background-color: #4f46e5; color: white; padding: 20px; text-align: center;">
+        <h1 style="margin: 0;">Активация аккаунта 🔐</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 30px;">
+        <p style="font-size: 16px;">👋 Привет, <strong>{{ user.username }}</strong>!</p>
 
-Пожалуйста, активируйте ваш аккаунт по ссылке ниже:
+        <p style="font-size: 16px;">Спасибо за регистрацию. Пожалуйста, активируйте ваш аккаунт, перейдя по ссылке ниже:</p>
 
-<a href="{{ activation_link }}">{{ activation_link }}</a>
+        <p style="margin: 25px 0; text-align: center;">
+          <a href="{{ activation_link }}" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 16px;">Активировать аккаунт</a>
+        </p>
 
-Если вы не регистрировались, просто проигнорируйте это письмо.
+        <p style="font-size: 14px; color: #555;">Если вы не регистрировались — просто проигнорируйте это письмо.</p>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #888;">С уважением,<br>Команда Booking System</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #f4f4f4; text-align: center; padding: 15px; font-size: 13px; color: #777;">
+        &copy; 2025 Booking System — Все права защищены.
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+

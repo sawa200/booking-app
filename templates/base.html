@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" class="">
 <head>
     <meta charset="UTF-8" />
     <title>Booking System</title>
-    <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind через CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind конфигурация для тёмного режима -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class'
+      };
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-indigo-700 text-white p-4 shadow-md">
+    <header class="bg-indigo-700 text-white p-4 shadow-md dark:bg-indigo-900">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">Система бронювання 📅</h1>
             <nav class="space-x-4 flex items-center">
@@ -26,20 +33,25 @@
                     <a href="{% url 'login' %}" class="hover:underline text-green-200">Увійти 🔐</a>
                     <a href="{% url 'register' %}" class="hover:underline text-yellow-200">Реєстрація ✍️</a>
                 {% endif %}
+
+                <!-- Кнопка переключения темы -->
+                <button id="toggle-theme"
+                        class="ml-4 px-3 py-1 text-sm bg-indigo-500 text-white rounded hover:bg-indigo-600 transition">
+                    🌗 Тема
+                </button>
             </nav>
         </div>
     </header>
 
     <!-- Content -->
     <main class="container mx-auto p-6">
-
         {% if messages %}
           <div class="max-w-3xl mx-auto mb-6">
             {% for message in messages %}
               <div class="p-4 mb-4 rounded
-                  {% if message.tags == 'error' %} bg-red-200 text-red-800
-                  {% elif message.tags == 'success' %} bg-green-200 text-green-800
-                  {% else %} bg-gray-200 text-gray-800 {% endif %}">
+                  {% if message.tags == 'error' %} bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-100
+                  {% elif message.tags == 'success' %} bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-100
+                  {% else %} bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100 {% endif %}">
                 {{ message }}
               </div>
             {% endfor %}
@@ -51,9 +63,33 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white text-center p-4 mt-10">
+    <footer class="bg-gray-800 text-white text-center p-4 mt-10 dark:bg-gray-900">
         &copy; 2025 Система бронювання. Всі права захищені.
     </footer>
 
+    <!-- Скрипт переключения темы -->
+    <script>
+      const toggleButton = document.getElementById('toggle-theme');
+      const htmlElement = document.documentElement;
+
+      // Применить сохранённую тему при загрузке
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+          htmlElement.classList.add("dark");
+        }
+      });
+
+      // Переключить тему при нажатии
+      toggleButton.addEventListener("click", () => {
+        if (htmlElement.classList.contains("dark")) {
+          htmlElement.classList.remove("dark");
+          localStorage.setItem("theme", "light");
+        } else {
+          htmlElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        }
+      });
+    </script>
 </body>
 </html>

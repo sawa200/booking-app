@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,9 +134,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.ukr.net'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
-
-EMAIL_HOST_USER = 'o.kaziuchits@ukr.net'
-EMAIL_HOST_PASSWORD = 'm1xU1JRdsKWmPjO7' 
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+ 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
